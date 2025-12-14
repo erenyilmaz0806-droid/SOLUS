@@ -3,478 +3,222 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SOLUS</title>
-  <meta name="theme-color" content="#0d0f14" />
-
+  <title>Lucifer</title>
+  <meta name="theme-color" content="#0b0f16" />
   <style>
-    :root { --bg:#0d0f14; --panel:#141826; --line:#232a3a; --txt:#eaeaea; --muted:#9aa4b2; --danger:#ff4d4d; }
-    *{ box-sizing:border-box; }
-    body{ margin:0; background:var(--bg); color:var(--txt); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial; }
-    .wrap{ max-width:820px; margin:0 auto; padding:18px; }
-    .card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; }
-    h1{ margin:0 0 6px; letter-spacing:6px; text-align:center; }
-    .sub{ text-align:center; color:var(--muted); font-size:12px; margin-bottom:14px; }
-    input,button,textarea{
-      width:100%; padding:12px; border-radius:10px; border:1px solid var(--line);
-      background:#0f1220; color:var(--txt); font-size:16px;
+    :root{
+      --bg:#0b0f16;
+      --panel:#0f1623;
+      --line:#1f2a3a;
+      --txt:#e9eef6;
+      --muted:#9aa7b7;
+      --me:#2b6cff;
+      --bot:#141e2c;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      font-synthesis-weight:none;
     }
-    button{ background:#1a2236; cursor:pointer; }
-    button.danger{ background:#2a1620; border-color:#3a1f2a; color:#ffd7d7; }
-    button.danger:hover{ outline:1px solid var(--danger); }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .row > *{ flex:1; min-width:150px; }
-    .msgs{ height:58vh; overflow:auto; padding:10px; background:#0b0e16; border:1px solid var(--line); border-radius:12px; }
-    .msg{ margin:10px 0; line-height:1.35; white-space:pre-wrap; }
-    .me{ color:#8ab4ff; }
-    .ai{ color:#b7ffd8; }
-    .meta{ color:var(--muted); font-size:12px; }
-    .pill{ display:inline-block; padding:6px 10px; border:1px solid var(--line); border-radius:999px; color:var(--muted); font-size:12px; }
-    .tiny{ font-size:12px; color:var(--muted); }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--txt);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
+      display:flex;
+      justify-content:center;
+    }
+    .app{
+      width:min(820px, 100%);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    header{
+      position:sticky; top:0;
+      background:linear-gradient(180deg, rgba(11,15,22,.98), rgba(11,15,22,.80));
+      backdrop-filter: blur(8px);
+      border-bottom:1px solid var(--line);
+      padding:14px 14px 10px;
+      z-index:5;
+    }
+    .title{
+      display:flex; align-items:center; gap:10px;
+      font-weight:700; letter-spacing:.5px;
+    }
+    .badge{
+      width:32px;height:32px;border-radius:10px;
+      display:grid;place-items:center;
+      background:var(--panel);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      font-weight:800;
+    }
+    .subtitle{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:12px;
+    }
 
-    /* PIN overlay */
-    #pinOverlay{
-      position:fixed; inset:0; background:#0b0f14; z-index:9999;
-      display:flex; align-items:center; justify-content:center; padding:18px;
+    main{
+      flex:1;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
     }
-    #pinBox{
-      background:#141826; padding:22px; border-radius:14px;
-      width:100%; max-width:340px; text-align:center; border:1px solid var(--line);
+    .msg{
+      max-width:78%;
+      padding:12px 12px;
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+      line-height:1.35;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      font-size:15px;
     }
-    #pinTitle{ margin:0 0 6px; }
-    #pinHint{ margin:0 0 12px; color:var(--muted); font-size:13px; }
-    #pinInput{
-      width:100%; padding:12px; font-size:22px; text-align:center;
-      border-radius:10px; border:1px solid var(--line);
-      background:#0f1220; color:#fff; letter-spacing:8px;
+    .bot{
+      align-self:flex-start;
+      background:var(--bot);
     }
-    #pinMsg{ color:#ff6b6b; font-size:13px; min-height:18px; margin-top:10px; }
-    #pinActions{ display:flex; gap:10px; margin-top:12px; }
-    #pinActions button{ flex:1; }
+    .me{
+      align-self:flex-end;
+      background:color-mix(in srgb, var(--me) 22%, var(--panel));
+      border-color: color-mix(in srgb, var(--me) 45%, var(--line));
+    }
+
+    footer{
+      position:sticky; bottom:0;
+      background:linear-gradient(0deg, rgba(11,15,22,.98), rgba(11,15,22,.80));
+      backdrop-filter: blur(8px);
+      border-top:1px solid var(--line);
+      padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+      display:flex;
+      gap:10px;
+    }
+    textarea{
+      flex:1;
+      resize:none;
+      height:46px;
+      max-height:160px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--txt);
+      outline:none;
+      font-size:15px;
+      line-height:1.2;
+    }
+    button{
+      width:96px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--me);
+      color:white;
+      font-weight:700;
+      font-size:15px;
+      cursor:pointer;
+    }
+    button:active{transform:translateY(1px)}
+    .hint{display:none;}
   </style>
 </head>
-
 <body>
-  <!-- PIN KİLİDİ -->
-  <div id="pinOverlay">
-    <div id="pinBox">
-      <h2 id="pinTitle">SOLUS Kilidi</h2>
-      <p id="pinHint">6 haneli PIN gir</p>
-      <input id="pinInput" type="password" inputmode="numeric" maxlength="6" placeholder="••••••" />
-      <div id="pinActions">
-        <button id="btnPinOk">Kilidi Aç</button>
-        <button id="btnPinReset" class="danger" title="Tüm veriyi silerek sıfırla">Sıfırla</button>
+  <div class="app">
+    <header>
+      <div class="title">
+        <div class="badge">L</div>
+        <div>Lucifer</div>
       </div>
-      <p id="pinMsg"></p>
-      <p class="tiny" style="margin-top:10px">
-        Not: PIN ve tüm veriler sadece bu telefonda, şifreli saklanır.
-      </p>
-    </div>
+      <div class="subtitle"></div>
+    </header>
+
+    <main id="chat"></main>
+
+    <footer>
+      <textarea id="input" placeholder="Mesaj yaz..." rows="1"></textarea>
+      <button id="send">Gönder</button>
+    </footer>
   </div>
 
-  <div class="wrap">
-    <div class="card" id="appCard" style="display:none">
-      <h1>S O L U S</h1>
-      <div class="sub">Offline • Local • Şifreli Hafıza</div>
+  <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
 
-      <div class="row" style="margin-bottom:10px">
-        <div class="pill" id="statusPill">Kilit açık</div>
-        <button id="btnExport">Yedek indir</button>
-        <button id="btnImport">Yedek yükle</button>
-        <button id="btnLock">Kilitle</button>
-        <button id="btnPanic" class="danger">Panic (sil)</button>
-      </div>
+    const STORE_KEY = "lucifer_chat_v1";
 
-      <div class="msgs" id="msgs"></div>
-
-      <div class="row" style="margin-top:10px">
-        <textarea id="input" rows="2" placeholder="SOLUS seni dinliyor… (Enter = gönder, Shift+Enter = satır)"></textarea>
-        <button id="btnSend">Gönder</button>
-      </div>
-
-      <div class="meta" style="margin-top:10px">
-        Komutlar:
-        <br>• <b>Beni hatırla:</b> (profil notu ekler)
-        <br>• <b>Ne hatırlıyorsun?</b> (profil notlarını gösterir)
-        <br>• <b>Profilim:</b> (özet)
-      </div>
-    </div>
-  </div>
-
-<script>
-/* -----------------------------
-   ŞİFRELİ HAFIZA ALTYAPISI
-------------------------------*/
-const STORE_KEY = "solus_secure_store_v1";   // şifreli paket
-const CRYPTO_KEY = "solus_crypto_v1";        // salt + pbkdf2 ayarları
-const PIN_FLAG = "solus_pin_set_v1";         // pin set mi
-const PBKDF2_ITER = 200_000;
-
-let sessionKey = null; // CryptoKey (AES-GCM)
-
-const els = {
-  pinOverlay: document.getElementById("pinOverlay"),
-  pinInput: document.getElementById("pinInput"),
-  pinMsg: document.getElementById("pinMsg"),
-  pinHint: document.getElementById("pinHint"),
-  btnPinOk: document.getElementById("btnPinOk"),
-  btnPinReset: document.getElementById("btnPinReset"),
-
-  appCard: document.getElementById("appCard"),
-  statusPill: document.getElementById("statusPill"),
-  msgs: document.getElementById("msgs"),
-  input: document.getElementById("input"),
-  btnSend: document.getElementById("btnSend"),
-  btnExport: document.getElementById("btnExport"),
-  btnImport: document.getElementById("btnImport"),
-  btnLock: document.getElementById("btnLock"),
-  btnPanic: document.getElementById("btnPanic"),
-};
-
-function b64(buf){
-  return btoa(String.fromCharCode(...new Uint8Array(buf)));
-}
-function unb64(str){
-  const bin = atob(str);
-  const arr = new Uint8Array(bin.length);
-  for (let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
-  return arr.buffer;
-}
-function randBytes(n){
-  const a = new Uint8Array(n);
-  crypto.getRandomValues(a);
-  return a;
-}
-async function deriveAesKey(pin, saltB64){
-  const salt = new Uint8Array(unb64(saltB64));
-  const enc = new TextEncoder();
-  const baseKey = await crypto.subtle.importKey(
-    "raw",
-    enc.encode(pin),
-    "PBKDF2",
-    false,
-    ["deriveKey"]
-  );
-  return crypto.subtle.deriveKey(
-    {
-      name:"PBKDF2",
-      salt,
-      iterations: PBKDF2_ITER,
-      hash:"SHA-256"
-    },
-    baseKey,
-    { name:"AES-GCM", length:256 },
-    false,
-    ["encrypt","decrypt"]
-  );
-}
-
-function getCryptoMeta(){
-  const meta = localStorage.getItem(CRYPTO_KEY);
-  return meta ? JSON.parse(meta) : null;
-}
-function setCryptoMeta(meta){
-  localStorage.setItem(CRYPTO_KEY, JSON.stringify(meta));
-}
-function getStorePacket(){
-  const p = localStorage.getItem(STORE_KEY);
-  return p ? JSON.parse(p) : null;
-}
-function setStorePacket(packet){
-  localStorage.setItem(STORE_KEY, JSON.stringify(packet));
-}
-
-function defaultState(){
-  return {
-    chat: [],
-    profile: {
-      notes: [],
-      created_at: Date.now()
+    function loadHistory(){
+      try{
+        const raw = localStorage.getItem(STORE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      }catch(e){ return []; }
     }
-  };
-}
-
-async function encryptState(state){
-  if (!sessionKey) throw new Error("No session key");
-  const iv = randBytes(12);
-  const data = new TextEncoder().encode(JSON.stringify(state));
-  const ct = await crypto.subtle.encrypt({name:"AES-GCM", iv}, sessionKey, data);
-  return { iv: b64(iv), ct: b64(ct) };
-}
-async function decryptState(packet){
-  if (!packet) return defaultState();
-  if (!sessionKey) throw new Error("No session key");
-  const iv = new Uint8Array(unb64(packet.iv));
-  const ct = unb64(packet.ct);
-  const pt = await crypto.subtle.decrypt({name:"AES-GCM", iv}, sessionKey, ct);
-  return JSON.parse(new TextDecoder().decode(pt));
-}
-
-async function loadState(){
-  const pkt = getStorePacket();
-  try {
-    return await decryptState(pkt);
-  } catch(e){
-    // PIN yanlışsa veya veri bozulduysa burada patlar
-    throw new Error("DECRYPT_FAIL");
-  }
-}
-async function saveState(state){
-  const pkt = await encryptState(state);
-  setStorePacket(pkt);
-}
-
-function renderChat(state){
-  els.msgs.innerHTML = "";
-  for (const m of state.chat){
-    const div = document.createElement("div");
-    div.className = "msg " + (m.role === "user" ? "me" : "ai");
-    div.textContent = (m.role === "user" ? "Sen: " : "SOLUS: ") + m.content;
-    els.msgs.appendChild(div);
-  }
-  els.msgs.scrollTop = els.msgs.scrollHeight;
-}
-
-function addMsg(state, role, content){
-  state.chat.push({role, content, t: Date.now()});
-}
-
-/* -----------------------------
-   SOLUS OFFLINE CEVAP MANTIĞI
-   (Şifreli profil + chat)
-------------------------------*/
-function solusReply(state, userText){
-  const profile = state.profile;
-  const chat = state.chat;
-  const lastUser = [...chat].reverse().find(x=>x.role==="user" && x.content !== userText)?.content;
-
-  // Profil notu ekle
-  const m = userText.match(/^\s*beni hatırla\s*:\s*(.+)$/i);
-  if (m){
-    profile.notes.push(m[1].trim());
-    return "Tamam. Bunu profil hafızama ekledim:\n• " + m[1].trim();
-  }
-
-  if (/ne hatırlıyorsun|hafıza/i.test(userText)){
-    if (!profile.notes.length) return "Profil notlarım boş. “Beni hatırla: …” yazabilirsin.";
-    return "Profil notlarım:\n" + profile.notes.map(n=>"• "+n).join("\n");
-  }
-
-  if (/profilim/i.test(userText)){
-    const count = profile.notes.length;
-    const last = count ? profile.notes[count-1] : "yok";
-    return `Profil özeti:\n• Not sayısı: ${count}\n• Son not: ${last}`;
-  }
-
-  let ref = lastUser ? `\n\nAz önce şunu demiştin: “${lastUser}”` : "";
-  if (profile.notes.length){
-    ref += `\n\nProfil notu (son): “${profile.notes[profile.notes.length-1]}”`;
-  }
-  return "Anladım. Offline moddayım; her şey bu telefonda ve şifreli." + ref;
-}
-
-/* -----------------------------
-   PIN KİLİDİ AKIŞI
-------------------------------*/
-function setPinMsg(t){ els.pinMsg.textContent = t || ""; }
-
-async function firstTimeSetup(pin){
-  // PIN 6 haneli mi?
-  if (!/^\d{6}$/.test(pin)) throw new Error("PIN_LEN");
-  // Onay
-  const confirmPin = prompt("PIN'i tekrar yaz (6 hane):");
-  if (confirmPin !== pin) throw new Error("PIN_MISMATCH");
-
-  // crypto meta oluştur
-  const salt = randBytes(16);
-  const meta = { salt: b64(salt), iter: PBKDF2_ITER, created_at: Date.now() };
-  setCryptoMeta(meta);
-  localStorage.setItem(PIN_FLAG, "1");
-
-  // session key
-  sessionKey = await deriveAesKey(pin, meta.salt);
-
-  // ilk state
-  const st = defaultState();
-  addMsg(st, "assistant", "Hoş geldin. Ben SOLUS. Hafızam şifreli ve sadece bu telefonda.");
-  await saveState(st);
-}
-
-async function unlockWithPin(pin){
-  if (!/^\d{6}$/.test(pin)) throw new Error("PIN_LEN");
-  const meta = getCryptoMeta();
-  if (!meta) throw new Error("NO_META");
-  sessionKey = await deriveAesKey(pin, meta.salt);
-  // test decrypt
-  const st = await loadState();
-  return st;
-}
-
-function showApp(){
-  els.appCard.style.display = "block";
-  els.pinOverlay.style.display = "none";
-  els.statusPill.textContent = "Kilit açık";
-}
-function lockApp(){
-  els.pinInput.value = "";
-  setPinMsg("");
-  els.pinOverlay.style.display = "flex";
-  els.appCard.style.display = "none";
-}
-
-/* -----------------------------
-   PANIC / RESET
-------------------------------*/
-function wipeAll(){
-  localStorage.removeItem(STORE_KEY);
-  localStorage.removeItem(CRYPTO_KEY);
-  localStorage.removeItem(PIN_FLAG);
-  sessionKey = null;
-}
-
-async function panic(){
-  if (!confirm("PANIC: Tüm sohbet + profil + PIN tamamen silinsin mi? (Geri dönüş yok)")) return;
-  wipeAll();
-  location.reload();
-}
-
-/* -----------------------------
-   EXPORT / IMPORT (Şifreli yedek)
-------------------------------*/
-async function exportBackup(){
-  const meta = getCryptoMeta();
-  const pkt = getStorePacket();
-  if (!meta || !pkt) {
-    alert("Yedeklenecek veri yok.");
-    return;
-  }
-  const backup = {
-    v: 1,
-    meta,
-    packet: pkt
-  };
-  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "solus-backup-encrypted.json";
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-async function importBackup(){
-  const inp = document.createElement("input");
-  inp.type = "file";
-  inp.accept = "application/json";
-  inp.onchange = async ()=>{
-    const file = inp.files[0];
-    if (!file) return;
-    const txt = await file.text();
-    let obj;
-    try { obj = JSON.parse(txt); } catch { alert("Geçersiz dosya."); return; }
-    if (!obj?.meta?.salt || !obj?.packet?.iv || !obj?.packet?.ct){
-      alert("Bu SOLUS yedeği değil.");
-      return;
-    }
-    // Mevcut her şeyi üzerine yazmadan önce sor
-    if (!confirm("Yedek yüklenecek. Mevcut veri üzerine yazılabilir. Devam?")) return;
-
-    setCryptoMeta(obj.meta);
-    setStorePacket(obj.packet);
-    localStorage.setItem(PIN_FLAG, "1");
-
-    alert("Yedek yüklendi. Kilidi açmak için PIN girmen gerekecek.");
-    location.reload();
-  };
-  inp.click();
-}
-
-/* -----------------------------
-   UI bağla
-------------------------------*/
-let stateCache = null;
-
-async function boot(){
-  const hasPin = localStorage.getItem(PIN_FLAG) === "1";
-  if (!hasPin){
-    els.pinHint.textContent = "İlk kurulum: 6 haneli PIN belirle";
-  } else {
-    els.pinHint.textContent = "6 haneli PIN gir";
-  }
-  els.pinInput.focus();
-}
-
-els.btnPinOk.onclick = async ()=>{
-  setPinMsg("");
-  const pin = els.pinInput.value.trim();
-
-  try {
-    const hasPin = localStorage.getItem(PIN_FLAG) === "1";
-    if (!hasPin){
-      await firstTimeSetup(pin);
-      stateCache = await loadState();
-      showApp();
-      renderChat(stateCache);
-      return;
+    function saveHistory(arr){
+      localStorage.setItem(STORE_KEY, JSON.stringify(arr));
     }
 
-    stateCache = await unlockWithPin(pin);
-    showApp();
-    renderChat(stateCache);
-  } catch(e){
-    if (e.message === "DECRYPT_FAIL") setPinMsg("PIN yanlış veya veri bozuk.");
-    else if (e.message === "PIN_LEN") setPinMsg("PIN 6 haneli olmalı.");
-    else if (e.message === "PIN_MISMATCH") setPinMsg("PIN tekrarı uyuşmadı.");
-    else setPinMsg("Açılamadı: " + e.message);
-  }
-};
+    let history = loadHistory();
 
-els.btnPinReset.onclick = async ()=>{
-  if (!confirm("Sıfırla: PIN + tüm veri silinsin mi?")) return;
-  wipeAll();
-  location.reload();
-};
+    function addMsg(role, text){
+      const div = document.createElement('div');
+      div.className = `msg ${role === 'me' ? 'me' : 'bot'}`;
+      div.textContent = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-els.btnLock.onclick = ()=> lockApp();
-els.btnPanic.onclick = ()=> panic();
-els.btnExport.onclick = ()=> exportBackup();
-els.btnImport.onclick = ()=> importBackup();
+    function render(){
+      chat.innerHTML = "";
+      if(history.length === 0){
+        addMsg('bot', "Merhaba. Ben Lucifer.");
+      } else {
+        history.forEach(m => addMsg(m.role, m.content));
+      }
+    }
 
-els.btnSend.onclick = async ()=>{
-  const text = els.input.value.trim();
-  if (!text) return;
-  els.input.value = "";
+    function autoResize(){
+      input.style.height = "46px";
+      input.style.height = Math.min(input.scrollHeight, 160) + "px";
+    }
 
-  try {
-    const st = stateCache || await loadState();
-    addMsg(st, "user", text);
-    const reply = solusReply(st, text);
-    addMsg(st, "assistant", reply);
+    // Offline cevap: ChatGPT gibi görünür ama local çalışır
+    function localReply(userText){
+      // çok kısa, sade: ekstra “dinliyorum” falan yok
+      if(history.length <= 2){
+        return "Tamam.";
+      }
+      return "Anladım. Devam et.";
+    }
 
-    await saveState(st);
-    stateCache = st;
-    renderChat(st);
-  } catch(e){
-    alert("Kayıt hatası. Kilitlenmiş olabilir. (PIN tekrar gir)");
-    lockApp();
-  }
-};
+    function send(){
+      const text = input.value.trim();
+      if(!text) return;
 
-els.input.addEventListener("keydown", (e)=>{
-  if (e.key === "Enter" && !e.shiftKey){
-    e.preventDefault();
-    els.btnSend.click();
-  }
-});
+      history.push({ role:"me", content:text, created_at: Date.now() });
+      addMsg('me', text);
+      input.value = "";
+      autoResize();
 
-// Otomatik kilitle: uygulama arka plana gidince
-document.addEventListener("visibilitychange", ()=>{
-  if (document.hidden){
-    // arka plana gidince kilitle
-    lockApp();
-  }
-});
+      const reply = localReply(text);
+      history.push({ role:"bot", content:reply, created_at: Date.now() });
+      addMsg('bot', reply);
 
-// Başlat
-boot();
-</script>
+      saveHistory(history);
+    }
+
+    sendBtn.addEventListener('click', send);
+    input.addEventListener('input', autoResize);
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        send();
+      }
+    });
+
+    render();
+    autoResize();
+  </script>
 </body>
 </html>
