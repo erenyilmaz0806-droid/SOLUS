@@ -1,3 +1,94 @@
+<!-- PIN LOCK OVERLAY -->
+<div id="pinOverlay" style="
+  position:fixed;
+  inset:0;
+  background:#0b0f14;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+">
+  <div style="
+    background:#141826;
+    padding:24px;
+    border-radius:14px;
+    width:100%;
+    max-width:320px;
+    text-align:center;
+    color:#e6e8ee;
+  ">
+    <h2 style="margin-bottom:8px">SOLUS Kilidi</h2>
+    <p style="font-size:14px;color:#9aa4b2;margin-bottom:14px">
+      6 haneli PIN gir
+    </p>
+    <input
+      id="pinInput"
+      type="password"
+      inputmode="numeric"
+      maxlength="6"
+      placeholder="••••••"
+      style="
+        width:100%;
+        padding:12px;
+        font-size:20px;
+        text-align:center;
+        border-radius:10px;
+        border:1px solid #232a3a;
+        background:#0f1220;
+        color:#fff;
+        letter-spacing:6px;
+      "
+    />
+    <button
+      onclick="checkPIN()"
+      style="
+        margin-top:14px;
+        width:100%;
+        padding:12px;
+        border-radius:10px;
+        background:#1a2236;
+        color:#fff;
+        border:none;
+        font-size:16px;
+      "
+    >Kilidi Aç</button>
+
+    <p id="pinMsg" style="color:#ff6b6b;font-size:13px;margin-top:10px"></p>
+  </div>
+</div>
+
+<script>
+  const PIN_KEY = "SOLUS_PIN";
+
+  function checkPIN() {
+    const input = document.getElementById("pinInput").value;
+    const saved = localStorage.getItem(PIN_KEY);
+
+    if (!saved) {
+      if (input.length !== 6) {
+        msg("PIN 6 haneli olmalı");
+        return;
+      }
+      localStorage.setItem(PIN_KEY, input);
+      unlock();
+      return;
+    }
+
+    if (input === saved) {
+      unlock();
+    } else {
+      msg("Yanlış PIN");
+    }
+  }
+
+  function unlock() {
+    document.getElementById("pinOverlay").style.display = "none";
+  }
+
+  function msg(t) {
+    document.getElementById("pinMsg").innerText = t;
+  }
+</script>
 <!doctype html>
 <html lang="tr">
 <head>
