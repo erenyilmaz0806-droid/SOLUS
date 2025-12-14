@@ -2,223 +2,334 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Lucifer</title>
-  <meta name="theme-color" content="#0b0f16" />
+  <meta name="theme-color" content="#070a10" />
   <style>
     :root{
-      --bg:#0b0f16;
-      --panel:#0f1623;
-      --line:#1f2a3a;
-      --txt:#e9eef6;
-      --muted:#9aa7b7;
-      --me:#2b6cff;
-      --bot:#141e2c;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius:18px;
-      font-synthesis-weight:none;
+      --bg0:#070a10;
+      --bg1:#0b1020;
+      --glass: rgba(255,255,255,.06);
+      --glass2: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.10);
+      --txt: #eaf0ff;
+      --muted:#9aa8c7;
+      --btn: rgba(255,255,255,.08);
+      --btn2: rgba(255,255,255,.12);
+      --me: #8fb4ff;
+      --bot: #b9ffdf;
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r: 22px;
     }
-    *{box-sizing:border-box}
+
+    *{ box-sizing:border-box; }
     body{
       margin:0;
-      background:var(--bg);
-      color:var(--txt);
+      min-height:100vh;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--txt);
+      background:
+        radial-gradient(900px 600px at 15% 10%, rgba(125,90,255,.18), transparent 60%),
+        radial-gradient(700px 500px at 85% 20%, rgba(0,255,200,.10), transparent 60%),
+        radial-gradient(900px 700px at 50% 110%, rgba(80,140,255,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
       display:flex;
       justify-content:center;
-    }
-    .app{
-      width:min(820px, 100%);
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-    }
-    header{
-      position:sticky; top:0;
-      background:linear-gradient(180deg, rgba(11,15,22,.98), rgba(11,15,22,.80));
-      backdrop-filter: blur(8px);
-      border-bottom:1px solid var(--line);
-      padding:14px 14px 10px;
-      z-index:5;
-    }
-    .title{
-      display:flex; align-items:center; gap:10px;
-      font-weight:700; letter-spacing:.5px;
-    }
-    .badge{
-      width:32px;height:32px;border-radius:10px;
-      display:grid;place-items:center;
-      background:var(--panel);
-      border:1px solid var(--line);
-      box-shadow:var(--shadow);
-      font-weight:800;
-    }
-    .subtitle{
-      margin-top:4px;
-      color:var(--muted);
-      font-size:12px;
+      padding: 18px 12px calc(18px + env(safe-area-inset-bottom));
     }
 
-    main{
-      flex:1;
-      padding:14px;
+    .frame{
+      width:min(880px, 100%);
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:12px;
+      align-items:center;
     }
+
+    .panel{
+      width:min(520px, 100%);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 14px;
+    }
+
+    .topbar{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .pill{
+      border-radius: 16px;
+      padding: 12px 12px;
+      background: var(--btn);
+      border:1px solid var(--line);
+      color: var(--txt);
+      font-weight: 650;
+      letter-spacing:.2px;
+      text-align:center;
+      user-select:none;
+    }
+
+    .btnrow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    button{
+      appearance:none;
+      border:none;
+      background: var(--btn);
+      border:1px solid var(--line);
+      color: var(--txt);
+      padding: 14px 12px;
+      border-radius: 18px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor:pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+    }
+    button:active{ transform: translateY(1px); background: var(--btn2); }
+
+    .bigbtn{
+      grid-column: 1 / -1;
+      padding: 15px 14px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    }
+
+    .chatbox{
+      border-radius: 22px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+      padding: 14px;
+      height: 420px;
+      overflow:auto;
+    }
+
     .msg{
-      max-width:78%;
-      padding:12px 12px;
-      border-radius: var(--radius);
-      border:1px solid var(--line);
-      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+      white-space: pre-wrap;
+      word-wrap: break-word;
       line-height:1.35;
-      white-space:pre-wrap;
-      word-wrap:break-word;
-      font-size:15px;
+      font-size: 15px;
+      margin: 0 0 12px 0;
     }
-    .bot{
-      align-self:flex-start;
-      background:var(--bot);
+    .name{
+      font-weight: 800;
+      letter-spacing:.2px;
+      margin-right: 8px;
     }
-    .me{
-      align-self:flex-end;
-      background:color-mix(in srgb, var(--me) 22%, var(--panel));
-      border-color: color-mix(in srgb, var(--me) 45%, var(--line));
+    .lucifer .name{ color: var(--bot); }
+    .me .name{ color: var(--me); }
+
+    .composer{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: 1fr 120px;
+      gap:10px;
+      align-items:stretch;
     }
 
-    footer{
-      position:sticky; bottom:0;
-      background:linear-gradient(0deg, rgba(11,15,22,.98), rgba(11,15,22,.80));
-      backdrop-filter: blur(8px);
-      border-top:1px solid var(--line);
-      padding:12px 12px calc(12px + env(safe-area-inset-bottom));
-      display:flex;
-      gap:10px;
-    }
     textarea{
-      flex:1;
       resize:none;
-      height:46px;
-      max-height:160px;
-      padding:12px 12px;
-      border-radius:14px;
+      border-radius: 18px;
       border:1px solid var(--line);
-      background:var(--panel);
-      color:var(--txt);
+      background: rgba(255,255,255,.06);
+      color: var(--txt);
+      padding: 14px 14px;
       outline:none;
       font-size:15px;
-      line-height:1.2;
+      min-height: 56px;
+      max-height: 160px;
     }
-    button{
-      width:96px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:var(--me);
-      color:white;
-      font-weight:700;
-      font-size:15px;
-      cursor:pointer;
+
+    .send{
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(120,160,255,.35), rgba(120,160,255,.18));
+      border:1px solid rgba(120,160,255,.45);
+      font-weight: 900;
     }
-    button:active{transform:translateY(1px)}
-    .hint{display:none;}
+
+    .footnote{
+      margin-top:10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align:center;
+    }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <header>
-      <div class="title">
-        <div class="badge">L</div>
-        <div>Lucifer</div>
+  <div class="frame">
+    <div class="panel">
+      <div class="topbar">
+        <div class="pill" id="modePill">Offline • Local</div>
+        <button id="downloadBtn">Geçmişi indir</button>
       </div>
-      <div class="subtitle"></div>
-    </header>
 
-    <main id="chat"></main>
+      <div class="btnrow">
+        <button id="uploadBtn">Geçmişi yükle</button>
+        <button id="clearBtn">Geçmişi sil</button>
+        <button class="bigbtn" id="lockBtn">Kilitle</button>
+      </div>
 
-    <footer>
-      <textarea id="input" placeholder="Mesaj yaz..." rows="1"></textarea>
-      <button id="send">Gönder</button>
-    </footer>
+      <div class="chatbox" id="chat"></div>
+
+      <div class="composer">
+        <textarea id="input" placeholder="Mesaj yaz..."></textarea>
+        <button class="send" id="sendBtn">Gönder</button>
+      </div>
+
+      <div class="footnote">Lucifer</div>
+    </div>
   </div>
 
-  <script>
-    const chat = document.getElementById('chat');
-    const input = document.getElementById('input');
-    const sendBtn = document.getElementById('send');
+<script>
+  const chat = document.getElementById("chat");
+  const input = document.getElementById("input");
+  const sendBtn = document.getElementById("sendBtn");
 
-    const STORE_KEY = "lucifer_chat_v1";
+  const downloadBtn = document.getElementById("downloadBtn");
+  const uploadBtn = document.getElementById("uploadBtn");
+  const clearBtn = document.getElementById("clearBtn");
+  const lockBtn = document.getElementById("lockBtn");
 
-    function loadHistory(){
-      try{
-        const raw = localStorage.getItem(STORE_KEY);
-        return raw ? JSON.parse(raw) : [];
-      }catch(e){ return []; }
+  const STORE = "lucifer_history_v2";
+  const LOCK  = "lucifer_locked_v1";
+
+  function load(){
+    try { return JSON.parse(localStorage.getItem(STORE) || "[]"); }
+    catch { return []; }
+  }
+  function save(arr){
+    localStorage.setItem(STORE, JSON.stringify(arr));
+  }
+
+  let history = load();
+
+  function addLine(role, text){
+    const p = document.createElement("p");
+    p.className = "msg " + (role === "me" ? "me" : "lucifer");
+    const name = document.createElement("span");
+    name.className = "name";
+    name.textContent = (role === "me" ? "Sen:" : "LUCIFER:");
+    p.appendChild(name);
+    p.appendChild(document.createTextNode(" " + text));
+    chat.appendChild(p);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function render(){
+    chat.innerHTML = "";
+    if(history.length === 0){
+      addLine("lucifer", "Hoş geldin. Ben Lucifer.");
+      return;
     }
-    function saveHistory(arr){
-      localStorage.setItem(STORE_KEY, JSON.stringify(arr));
-    }
+    history.forEach(m => addLine(m.role, m.content));
+  }
 
-    let history = loadHistory();
+  function autoresize(){
+    input.style.height = "56px";
+    input.style.height = Math.min(input.scrollHeight, 160) + "px";
+  }
 
-    function addMsg(role, text){
-      const div = document.createElement('div');
-      div.className = `msg ${role === 'me' ? 'me' : 'bot'}`;
-      div.textContent = text;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-    }
+  // Offline demo cevap: sadece hissi verir, “dinliyor” yazmaz
+  function localReply(userText){
+    const t = userText.toLowerCase();
+    if(t.includes("merhaba")) return "Merhaba.";
+    if(t.includes("adım")) return "Anladım.";
+    return "Devam et.";
+  }
 
-    function render(){
-      chat.innerHTML = "";
-      if(history.length === 0){
-        addMsg('bot', "Merhaba. Ben Lucifer.");
-      } else {
-        history.forEach(m => addMsg(m.role, m.content));
-      }
-    }
-
-    function autoResize(){
-      input.style.height = "46px";
-      input.style.height = Math.min(input.scrollHeight, 160) + "px";
-    }
-
-    // Offline cevap: ChatGPT gibi görünür ama local çalışır
-    function localReply(userText){
-      // çok kısa, sade: ekstra “dinliyorum” falan yok
-      if(history.length <= 2){
-        return "Tamam.";
-      }
-      return "Anladım. Devam et.";
-    }
-
-    function send(){
-      const text = input.value.trim();
-      if(!text) return;
-
-      history.push({ role:"me", content:text, created_at: Date.now() });
-      addMsg('me', text);
-      input.value = "";
-      autoResize();
-
-      const reply = localReply(text);
-      history.push({ role:"bot", content:reply, created_at: Date.now() });
-      addMsg('bot', reply);
-
-      saveHistory(history);
+  function send(){
+    if(localStorage.getItem(LOCK) === "1"){
+      addLine("lucifer","Kilitli.");
+      return;
     }
 
-    sendBtn.addEventListener('click', send);
-    input.addEventListener('input', autoResize);
-    input.addEventListener('keydown', (e)=>{
-      if(e.key === "Enter" && !e.shiftKey){
-        e.preventDefault();
-        send();
-      }
-    });
+    const text = input.value.trim();
+    if(!text) return;
 
+    history.push({ role:"me", content:text, created_at: Date.now() });
+    addLine("me", text);
+    input.value = "";
+    autoresize();
+
+    const r = localReply(text);
+    history.push({ role:"lucifer", content:r, created_at: Date.now() });
+    addLine("lucifer", r);
+
+    save(history);
+  }
+
+  sendBtn.addEventListener("click", send);
+  input.addEventListener("input", autoresize);
+  input.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter" && !e.shiftKey){
+      e.preventDefault();
+      send();
+    }
+  });
+
+  clearBtn.addEventListener("click", ()=>{
+    history = [];
+    save(history);
     render();
-    autoResize();
-  </script>
+  });
+
+  downloadBtn.addEventListener("click", ()=>{
+    const blob = new Blob([JSON.stringify(history, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "lucifer_history.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  uploadBtn.addEventListener("click", ()=>{
+    const inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = "application/json";
+    inp.onchange = () => {
+      const file = inp.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          const data = JSON.parse(reader.result);
+          if(Array.isArray(data)){
+            history = data;
+            save(history);
+            render();
+          }
+        }catch{}
+      };
+      reader.readAsText(file);
+    };
+    inp.click();
+  });
+
+  lockBtn.addEventListener("click", ()=>{
+    const locked = localStorage.getItem(LOCK) === "1";
+    localStorage.setItem(LOCK, locked ? "0" : "1");
+    lockBtn.textContent = locked ? "Kilitle" : "Kilitli (Aç)";
+    if(!locked) addLine("lucifer","Kilitli.");
+  });
+
+  // init
+  if(localStorage.getItem(LOCK) === "1"){
+    lockBtn.textContent = "Kilitli (Aç)";
+  }
+  render();
+  autoresize();
+</script>
 </body>
 </html>
